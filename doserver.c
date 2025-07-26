@@ -6,23 +6,30 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 
 #include "routes.h"
 
 struct route routes[] = {
 	(struct route) { "/", "main.c" },
-	(struct route) { "/doserver", "doserver.c" },
 	(struct route) { "/i3", "/home/bondrewd/.config/i3/config" },
+	(struct route) { "/doserver", "doserver.c" },
 };
 
 const char *successHeader = "HTTP/1.1 200 OK\r\n"
 		"Content-Type: text/plain\r\n"
-		"\r\n";
+		"Content-Length: ";
 
-const char *notAvailableHeader = "HTTP/1.1 404 NOT FOUND\r\n"
+const char *notAvailableHeader = "HTTP/1.1 404 Not Found\r\n"
 		"Content-Type: text/plain\r\n"
 		"\r\n"
 		"404 Not found\r\n"
+		"\r\n";
+
+const char *errorHeader = "HTTP/1.1 500 Internal Server Error\r\n"
+		"Content-Type: text/plain\r\n"
+		"\r\n"
+		"500 Internal Server Error\r\n"
 		"\r\n";
 
 void doserver(char *req, size_t lreq, int sock) {
@@ -57,11 +64,20 @@ void doserver(char *req, size_t lreq, int sock) {
 
 	if (localpath != NULL)
 	{
-		sprintf(buffer, "./%s", localpath);
-		send(sock, successHeader, strlen(successHeader), 0);
-		int fd = open(buffer, O_RDONLY);
-		size_t m;
+		/* Get content length */
+		struct stat st;
+		if (stat(localpath, &st) == -1)
+			goto err;
 
+		int temp = sprintf(buffer, "%d\r\n\r\n", st.st_size);
+
+		/* Read file and send over socket */
+		int fd = open(localpath, O_RDONLY);
+
+		send(sock, successHeader, strlen(successHeader), 0);
+		send(sock, buffer, temp, 0); /*Value of Content-Length field + 2xCRLF*/
+
+		size_t m;
 		while ((m = read(fd, buffer, 32)) == 32)
 			send(sock, buffer, m, 0);
 
@@ -75,4 +91,7 @@ void doserver(char *req, size_t lreq, int sock) {
 	{
 		send(sock, notAvailableHeader, strlen(notAvailableHeader), 0);
 	}
+
+err:
+	send(sock, errorHeader, strlen(errorHeader), 0);
 }
