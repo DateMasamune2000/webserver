@@ -10,6 +10,8 @@
 
 #include "doserver.h"
 
+#include "config.h"
+
 #define PORT 3000
 
 int main(void)
