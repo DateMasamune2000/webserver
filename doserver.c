@@ -43,6 +43,8 @@ void doserver(char *req, size_t lreq, int sock) {
 
 	while ((m = read(fd, buffer, 32)) == 32)
 		send(sock, buffer, m, 0);
+		
+	send(sock, buffer, m, 0);
 
 	send(sock, "\r\n\r\n", 4, 0);
 }
