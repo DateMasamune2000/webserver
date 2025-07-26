@@ -1,8 +1,13 @@
-webserver: main.o doserver.o
-	gcc -o webserver main.o doserver.o
+HEADERS=doserver.h config.h webtypes.h routes.h
 
-doserver.o: doserver.c doserver.h config.h
+webserver: main.o doserver.o routes.o
+	gcc -o webserver main.o doserver.o routes.o
+
+routes.o: routes.c $(HEADERS)
+	gcc -c -o routes.o routes.c
+
+doserver.o: doserver.c $(HEADERS)
 	gcc -c -o doserver.o doserver.c
 
-main.o: main.c doserver.h config.h
+main.o: main.c $(HEADERS)
 	gcc -c -o main.o main.c
