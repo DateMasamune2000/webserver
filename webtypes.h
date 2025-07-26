@@ -5,7 +5,7 @@
 
 struct route {
 	char from[32];
-	char to[32];
+	char to[256];
 };
 
 #endif

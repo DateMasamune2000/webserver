@@ -12,6 +12,7 @@
 struct route routes[] = {
 	(struct route) { "/", "main.c" },
 	(struct route) { "/doserver", "doserver.c" },
+	(struct route) { "/i3", "/home/bondrewd/.config/i3/config" },
 };
 
 const char *successHeader = "HTTP/1.1 200 OK\r\n"
