@@ -10,10 +10,12 @@
 
 #include "routes.h"
 
+int nroutes = 3;
+
 struct route routes[] = {
 	(struct route) { "/", "main.c" },
-	(struct route) { "/i3", "/home/bondrewd/.config/i3/config" },
 	(struct route) { "/doserver", "doserver.c" },
+	(struct route) { "/i3", "/home/bondrewd/.config/i3/config" },
 };
 
 const char *successHeader = "HTTP/1.1 200 OK\r\n"
@@ -60,7 +62,7 @@ void doserver(char *req, size_t lreq, int sock) {
 
 	char buffer[32];
 
-	char *localpath = r2localpath(resource, routes, 2);
+	char *localpath = r2localpath(resource, routes, nroutes);
 
 	if (localpath != NULL)
 	{
@@ -92,6 +94,7 @@ void doserver(char *req, size_t lreq, int sock) {
 		send(sock, notAvailableHeader, strlen(notAvailableHeader), 0);
 	}
 
+	return;
 err:
 	send(sock, errorHeader, strlen(errorHeader), 0);
 }
