@@ -34,7 +34,8 @@ const char *errorHeader = "HTTP/1.1 500 Internal Server Error\r\n"
 		"500 Internal Server Error\r\n"
 		"\r\n";
 
-void doserver(char *req, size_t lreq, int sock) {
+void doserver(char *req, size_t lreq, int sock)
+{
 	char *line, *lsvp;
 	int n = 1;
 
