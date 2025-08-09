@@ -12,44 +12,30 @@
 
 #include "config.h"
 
-#define PORT 3000
+struct server
+{
+	int fd;
+	int port;
+	struct sockaddr_in address;
+	int addrlen;
+};
+
+void servinit(struct server *serv);
 
 int main(void)
 {
-	int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (server_fd == 0) {
-		perror("socket failed");
-		exit(EXIT_FAILURE);
-	}
+	struct server serv;
 
-	const int enable = 1;
-	if (setsockopt(
-				server_fd,
-				SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
-		perror("setsockopt failed");
-		exit(EXIT_FAILURE);
-	}
+	servinit(&serv);
 
-	struct sockaddr_in address;
-	int addrlen = sizeof(address);
-
-	address.sin_family = AF_INET;
-	address.sin_addr.s_addr = INADDR_ANY;
-	address.sin_port = htons(PORT);
-
-	if (bind(server_fd, (struct sockaddr*) &address, sizeof(address)) < 0) {
-		perror("bind failure");
-		exit(EXIT_FAILURE);
-	}
-
-	if (listen(server_fd, 16) < 0) {
+	if (listen(serv.fd, 16) < 0) {
 		perror("listen failure");
 		exit(EXIT_FAILURE);
 	}
 
 	while (true) {
-		int new_socket = accept(server_fd, (struct sockaddr *) &address,
-				(socklen_t*) &addrlen);
+		int new_socket = accept(serv.fd, (struct sockaddr *) &serv.address,
+				(socklen_t*) &serv.addrlen);
 		if (new_socket < 0) {
 			perror("accept failure");
 			exit(EXIT_FAILURE);
@@ -65,7 +51,8 @@ int main(void)
 
 			if (valread == 2) {
 				rdone = true;
-			} else if (valread >= 4 && strcmp(buffer+valread-4, "\r\n\r\n") == 0) {
+			} else if (valread >= 4
+					&& strcmp(buffer+valread-4, "\r\n\r\n") == 0) {
 				rdone = true;
 			}
 		} while (!rdone);
@@ -75,7 +62,36 @@ int main(void)
 		close(new_socket);
 	}
 
-	close(server_fd);
+	close(serv.fd);
 
 	return 0;
+}
+
+void servinit(struct server *serv)
+{
+	serv->fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (serv->fd == 0) {
+		perror("socket failed");
+		exit(EXIT_FAILURE);
+	}
+
+	const int enable = 1;
+	if (setsockopt(
+				serv->fd,
+				SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0) {
+		perror("setsockopt failed");
+		exit(EXIT_FAILURE);
+	}
+
+	serv->addrlen = sizeof(serv->address);
+
+	serv->address.sin_family = AF_INET;
+	serv->address.sin_addr.s_addr = INADDR_ANY;
+	serv->address.sin_port = htons(PORT);
+
+	if (bind(serv->fd, (struct sockaddr*) &(serv->address),
+				sizeof(serv->address)) < 0) {
+		perror("bind failure");
+		exit(EXIT_FAILURE);
+	}
 }
