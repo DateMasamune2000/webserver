@@ -1,6 +1,7 @@
 HEADERS=doserver.h config.h routes.h
 OBJFILES=obj/main.o obj/doserver.o obj/routes.o
 
+all: bin/webserver bin/test
 
 bin/webserver: $(OBJFILES)
 	gcc -o bin/webserver obj/main.o obj/doserver.o obj/routes.o

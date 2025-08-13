@@ -8,7 +8,7 @@
 
 #define BUFSIZE 256
 
-int loadroutes(char *filename, struct route routelist)
+int loadroutes(char *filename, struct route *routelist)
 {
 	int fd = open(filename, O_RDONLY);
 	char c;

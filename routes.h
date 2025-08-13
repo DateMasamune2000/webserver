@@ -10,7 +10,7 @@ struct route {
 
 extern struct route routes[];
 
-void loadroutes(char *filename, struct route routelist);
+int loadroutes(char *filename, struct route *routelist);
 char *r2localpath(char *from, struct route *routes, int lroutes);
 
 #endif
