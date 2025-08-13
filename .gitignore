@@ -1,4 +1,6 @@
 *.o
 webserver
 *.swp
+bin/*
+obj/*
 
