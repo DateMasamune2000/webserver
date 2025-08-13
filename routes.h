@@ -1,6 +1,8 @@
 #ifndef _ROUTES_H
 #define _ROUTES_H
 
+#include "config.h"
+
 struct route {
 	char from[32];
 	char to[256];
@@ -8,6 +10,7 @@ struct route {
 
 extern struct route routes[];
 
+void loadroutes(char *filename, struct route routelist);
 char *r2localpath(char *from, struct route *routes, int lroutes);
 
 #endif

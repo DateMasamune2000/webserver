@@ -2,5 +2,6 @@
 #define _CONFIG_H
 
 #define PORT 3000
+#define MAXROUTES 16
 
 #endif

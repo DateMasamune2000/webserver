@@ -10,12 +10,9 @@
 
 #include "routes.h"
 
-int nroutes = 3;
-
-struct route routes[] = {
-	(struct route) { "/", "main.c" },
-	(struct route) { "/doserver", "doserver.c" },
-	(struct route) { "/i3", "/home/bondrewd/.config/i3/config" },
+int nroutes = 1;
+struct route routes[MAXROUTES] = {
+	(struct route) { .from = "/", .to = "main.c" }
 };
 
 const char *successHeader = "HTTP/1.1 200 OK\r\n"
@@ -33,6 +30,7 @@ const char *errorHeader = "HTTP/1.1 500 Internal Server Error\r\n"
 		"\r\n"
 		"500 Internal Server Error\r\n"
 		"\r\n";
+
 
 void doserver(char *req, size_t lreq, int sock)
 {
