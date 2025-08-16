@@ -8,9 +8,10 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
-#include "doserver.h"
-
 #include "config.h"
+
+#include "doserver.h"
+#include "routes.h"
 
 struct server
 {
