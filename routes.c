@@ -14,14 +14,13 @@ int loadroutes(char *filename, struct route *routelist)
 	char c;
 	char buffer[BUFSIZE];
 	/* tracks whether filename, escape character or route name is being read */
-	enum { RNAME, ESCAPE, FNAME } mode, pmode;
+	enum { RNAME, ESCAPE, FNAME } mode = RNAME, pmode;
 
 	int n = 0, k, i = 0;
 	while (read(fd, &c, 1) && n < MAXROUTES)
 	{
 		switch (mode)
 		{
-
 			case RNAME:
 				switch (c)
 				{
@@ -39,12 +38,20 @@ int loadroutes(char *filename, struct route *routelist)
 								" format: routes must have a destination\n");
 						exit(1);
 						break;
+					case EOF:
+						close(fd);
+						return 0;
 					default:
 						buffer[i++] = c;
 				}
 				break;
 
 			case ESCAPE:
+				if (c == EOF)
+				{
+					close(fd);
+					return 0;
+				}
 				buffer[i++] = c;
 				mode = pmode;
 				break;
@@ -66,6 +73,9 @@ int loadroutes(char *filename, struct route *routelist)
 						mode = RNAME;
 						i = 0;
 						break;
+					case EOF:
+						close(fd);
+						return n;
 					default:
 						buffer[i++] = c;
 				}
