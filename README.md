@@ -1,11 +1,32 @@
 # webserver
 
-Basic Web server in C that serves static files. With it being quite insecure
-at the moment, I would recommend running this in a container if you want to 
-run it at all.
+A lightweight web server that serves local files.
 
 No dependencies and (as of now) no HTTPS support.
 
-## Development
+## How to use
 
-Currently working on the ability to load routes from a file.
+Create the directory `$HOME/.config/dioserver`, and add route information to it.
+information. The format is as follows:
+
+```text
+<route1> <file1>
+<route2> <file2>
+...
+```
+
+You can have up to `MAXROUTES` routes (set at compile time in `config.h`).
+
+## Build
+
+Create the `bin` and `obj` directories. Customize the `config.h` file. Then run
+
+```shell
+make
+```
+
+## Notes
+
+Expected features:
+- Keep-alive
+- HTTPS
