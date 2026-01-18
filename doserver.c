@@ -10,10 +10,6 @@
 
 #include "routes.h"
 
-int nroutes = 1;
-struct route routes[MAXROUTES] = {
-	(struct route) { .from = "/", .to = "main.c" }
-};
 
 const char *successHeader = "HTTP/1.1 200 OK\r\n"
 		"Content-Type: text/plain\r\n"
@@ -32,7 +28,7 @@ const char *errorHeader = "HTTP/1.1 500 Internal Server Error\r\n"
 		"\r\n";
 
 
-void doserver(char *req, size_t lreq, int sock)
+void doserver(char *req, size_t lreq, int sock, int nroutes, struct route *routes)
 {
 	char *line, *lsvp;
 	int n = 1;

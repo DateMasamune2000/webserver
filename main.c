@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#include <stdbool.h>
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -13,12 +14,19 @@
 #include "doserver.h"
 #include "routes.h"
 
+char config_path[4096];
+
 struct server
 {
 	int fd;
 	int port;
 	struct sockaddr_in address;
 	int addrlen;
+};
+
+int nroutes = 1;
+struct route routes[MAXROUTES] = {
+	(struct route) { .from = "/", .to = "main.c" }
 };
 
 void servinit(struct server *serv);
@@ -34,6 +42,13 @@ int main(void)
 		exit(EXIT_FAILURE);
 	}
 
+	/* read config file */
+	sprintf(config_path, "%s/.config/dioserver/routes", getenv("HOME"));
+	nroutes = loadroutes(config_path, routes);
+	if (nroutes == -1)
+		exit(-1);
+
+	/* main loop */
 	while (true) {
 		int new_socket = accept(serv.fd, (struct sockaddr *) &serv.address,
 				(socklen_t*) &serv.addrlen);
@@ -58,7 +73,7 @@ int main(void)
 			}
 		} while (!rdone);
 
-		doserver(buffer, valread, new_socket);
+		doserver(buffer, valread, new_socket, nroutes, routes);
 
 		close(new_socket);
 	}

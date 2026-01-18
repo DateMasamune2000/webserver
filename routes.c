@@ -16,6 +16,11 @@ int loadroutes(char *filename, struct route *routelist)
 	/* tracks whether filename, escape character or route name is being read */
 	enum { RNAME, ESCAPE, FNAME } mode = RNAME, pmode;
 
+	if (fd == -1) {
+		perror("could not open route file");
+		return -1;
+	}
+
 	int n = 0, k, i = 0;
 	while (read(fd, &c, 1) && n < MAXROUTES)
 	{
