@@ -6,8 +6,17 @@ No dependencies and (as of now) no HTTPS support.
 
 ## How to use
 
-Create the directory `$HOME/.config/dioserver`, and add route information to it.
-information. The format is as follows:
+### Arguments
+
+One optional argument can be given to specify the current working directory. If
+the argument is not present, the working directory is assumed to be the parent
+directory of the executable. All relative paths in the configuration file are
+expressed relative to the working directory.
+
+### Configuration
+
+The configuration file is located at `$HOME/.config/dioserver`, and contains
+route information in the following format:
 
 ```text
 <route1> <file1>

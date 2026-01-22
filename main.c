@@ -31,8 +31,20 @@ struct route routes[MAXROUTES] = {
 
 void servinit(struct server *serv);
 
-int main(void)
+int main(int argc, char *argv[])
 {
+	if (argc > 2) {
+		fprintf(stderr, "Incorrect number of arguments.\n");
+		fprintf(stderr, "usage: %s [dir]\n");
+		fprintf(stderr, "Paths in config expressed relative to dir\n");
+		return 2;
+	} else if (argc == 2) {
+		if (chdir(argv[1]) == -1) {
+			perror("could not access directory");
+			return 1;
+		}
+	}
+
 	struct server serv;
 
 	servinit(&serv);
